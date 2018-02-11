@@ -26,30 +26,40 @@ end;
 
 function FillableConfiguration.loadConfPre(...)
 	print("Configuration preload");
-	for k,v in pairs(arg) do
-		print(k .. "=>" .. v);
+	print(tostring(self));
+	if arg ~= nil and type(arg) == "table" then
+		for k,v in pairs(arg) do
+			print(k .. "=>" .. v);
+		end;
 	end;
 	print("Configuration preload end;");
 end;
 
 function FillableConfiguration.loadConfPost(...)
 	print("Configuration postload");
-	for k,v in pairs(arg) do
-		print(k .. "=>" .. v);
+	print(tostring(self));
+	if arg ~= nil and type(arg) == "table" then
+		for k,v in pairs(arg) do
+			print(k .. "=>" .. v);
+		end;
 	end;
 	print("Configuration postload end;");
 end;
 
 function FillableConfiguration.loadConfSingleItem(...)
 	print("Configuration item load");
-	for k,v in pairs(arg) do
-		print(k .. "=>" .. v);
+	print(tostring(self));
+	if arg ~= nil and type(arg) == "table" then
+		for k,v in pairs(arg) do
+			print(k .. "=>" .. v);
+		end;
 	end;
 	print("Configuration item load end;");
 end;
 
+ConfigurationUtil.registerConfigurationType("fillConf", "Fillable configuration", FillableConfiguration.loadConfPre, FillableConfiguration.loadConfSingleItem, FillableConfiguration.loadConfPost, ConfigurationUtil.SELECTOR_MULTIOPTION);
+
 function FillableConfiguration:preLoad(savegame)
-	ConfigurationUtil.registerConfigurationType("fillConf", "Fillable configuration", FillableConfiguration.loadConfPre, FillableConfiguration.loadConfSingleItem, FillableConfiguration.loadConfPost, ConfigurationUtil.SELECTOR_MULTIOPTION);
 end;
 
 function FillableConfiguration:load(savegame)
