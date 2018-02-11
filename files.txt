@@ -1,0 +1,2 @@
+COPY: .\src\FillableConfiguration.lua
+C:\Users\Martin\Documents\My Games\FarmingSimulator2017\mods\FS7_Strom_TC_21000\scripts
