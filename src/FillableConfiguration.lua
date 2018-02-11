@@ -24,8 +24,46 @@ function FillableConfiguration.prerequisitesPresent(specializations)
 	return true;
 end;
 
+function FillableConfiguration.loadConfPre(...)
+	print("Configuration preload");
+	for k,v in pairs(arg) do
+		print(k .. "=>" .. v);
+	end;
+	print("Configuration preload end;");
+end;
+
+function FillableConfiguration.loadConfPost(...)
+	print("Configuration postload");
+	for k,v in pairs(arg) do
+		print(k .. "=>" .. v);
+	end;
+	print("Configuration postload end;");
+end;
+
+function FillableConfiguration.loadConfSingleItem(...)
+	print("Configuration item load");
+	for k,v in pairs(arg) do
+		print(k .. "=>" .. v);
+	end;
+	print("Configuration item load end;");
+end;
+
+function FillableConfiguration:preLoad(savegame)
+	ConfigurationUtil.registerConfigurationType("fillConf", "Fillable configuration", FillableConfiguration.loadConfPre, FillableConfiguration.loadConfSingleItem, FillableConfiguration.loadConfPost, ConfigurationUtil.SELECTOR_MULTIOPTION);
+end;
+
 function FillableConfiguration:load(savegame)
 	self.LFO = {};
+	
+	--
+	--	for saving using self.configurations["fillConf"]
+	-- and 
+	--	self.boughtConfigurations["fillConf"]
+	--
+	
+	DebugUtil.printTableRecursively(ConfigurationUtil, "", 0, 4 );
+	
+	-- end of loading
 end;
 
 function FillableConfiguration:postLoad(savegame)
