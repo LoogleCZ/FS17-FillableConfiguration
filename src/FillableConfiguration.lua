@@ -112,6 +112,47 @@ function FillableConfiguration:load(savegame)
         i=i+1;
     end;
 	-- we don't have fallback, because modders should use new config style
+
+	self.fillRootNode = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".fillRootNode", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    if self.fillRootNode == nil then
+        self.fillRootNode = self.components[1].node;
+    end;
+	
+	self.fillMassNode = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".fillMassNode", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    local updateFillLevelMass = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillMassNode", "#updateFillLevelMass", getXMLBool, true, fallbackConfigKey, fallbackOldKey);
+    if self.fillMassNode == nil and updateFillLevelMass then
+        self.fillMassNode = self.components[1].node;
+    end;
+	
+	self.exactFillRootNode = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".exactFillRootNode", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    if self.exactFillRootNode == nil then
+        self.exactFillRootNode = self.fillRootNode;
+    end;
+	
+	self.fillAutoAimTarget = {};
+    self.fillAutoAimTarget.node = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    if self.fillAutoAimTarget.node == nil then
+        self.fillAutoAimTarget.node = self.exactFillRootNode;
+    end
+    self.fillAutoAimTarget.baseTrans = {getTranslation(self.fillAutoAimTarget.node)};
+    self.fillAutoAimTarget.startZ = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#startZ", getXMLFloat, nil, fallbackConfigKey, fallbackOldKey);
+    self.fillAutoAimTarget.endZ = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#endZ", getXMLFloat, nil, fallbackConfigKey, fallbackOldKey);
+    self.fillAutoAimTarget.fillUnitIndex = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#fillUnitIndex", getXMLInt, 1, fallbackConfigKey, fallbackOldKey);
+    self.fillAutoAimTarget.startPercentage = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#startPercentage", getXMLFloat, 25, fallbackConfigKey, fallbackOldKey)/100;
+    self.fillAutoAimTarget.invert = Vehicle.getConfigurationValue(self.xmlFile, key, ".fillAutoAimTargetNode", "#invert", getXMLBool, false, fallbackConfigKey, fallbackOldKey);
+    if self.fillAutoAimTarget.startZ ~= nil and self.fillAutoAimTarget.endZ ~= nil then
+        local startZ = self.fillAutoAimTarget.startZ;
+        if self.fillAutoAimTarget.invert then
+            startZ = self.fillAutoAimTarget.endZ;
+        end;
+        setTranslation(self.fillAutoAimTarget.node, self.fillAutoAimTarget.baseTrans[1], self.fillAutoAimTarget.baseTrans[2], startZ);
+    end;
+	
+	self.attacherPipeRef = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".attacherPipe", "#refIndex", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+	
+	self.attacherPipe = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".attacherPipe", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    self.attacherPipeAnimation = getXMLString(self.xmlFile, "vehicle.attacherPipe#animationName");
+    self.attacherPipeAnimation = Vehicle.getConfigurationValue(self.xmlFile, key, ".attacherPipe", "#index", getXMLString, nil, fallbackConfigKey, fallbackOldKey);
 	
 	print("load done");
 	
@@ -143,7 +184,7 @@ end;
 function FillableConfiguration:delete() end;
 
 function FillableConfiguration:update(dt)
-	print(tostring(self:getFillLevel()));
+
 end;
 
 function FillableConfiguration:updateTick(dt)
