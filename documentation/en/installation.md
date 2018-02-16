@@ -72,3 +72,50 @@ In vehicle's xml file you can configure this tags (almost all form Fillable, Fil
 * `trailer`
 
 This specialization also allows you to use `objectChange` tags in configuration.
+
+Here is brief example of usage of this script:
+
+```xml
+<vehicle type="yourVehicleType">
+	<!-- rest of vehicle's settings here -->
+
+	<!-- here you can see that you don't have to use configuration option for all available tags if config is same in all cases... -->
+	<tipReferencePoints>
+		<tipReferencePoint index="0>9|0" width="2"/>
+		<tipReferencePoint index="0>9|1" width="6"/>
+		<tipReferencePoint index="0>9|2" width="1"/>
+	</tipReferencePoints>
+	<fillConfConfigurations>
+		<fillConfConfiguration name="$l10n_bez_nastavby" price="0">
+			<!-- here we're changing trailer's capacity.. -->
+			<fillUnits>
+				<fillUnit unit="$l10n_unit_literShort" fillTypeCategories="bulk" capacity="21000"/>
+			</fillUnits>
+			<!-- and we're using object change nodes... -->
+			<objectChange node="0>0|0|0|0|3" visibilityActive="false" />
+			<objectChange node="0>0|0|0|0|4|0" visibilityActive="false" />
+			<objectChange node="0>0|0|0|0|9" visibilityActive="false" />
+			<objectChange node="0>0|0|0|0|4|7" visibilityActive="false" />
+		</fillConfConfiguration>
+		<fillConfConfiguration name="$l10n_nastavba_stredni" price="2500" icon="$dataS2/menu/hud/configurations/config_edition.png">
+			<!-- We have three capacity setting with different pricing -->
+			<fillUnits>
+				<fillUnit unit="$l10n_unit_literShort" fillTypeCategories="bulk" capacity="25000"/>
+			</fillUnits>
+			<objectChange node="0>0|0|0|0|3" visibilityActive="false" />
+			<objectChange node="0>0|0|0|0|4|0" visibilityActive="false" />
+			<objectChange node="0>0|0|0|0|9" visibilityActive="true" />
+			<objectChange node="0>0|0|0|0|4|7" visibilityActive="true" />
+		</fillConfConfiguration>
+		<fillConfConfiguration name="$l10n_nastavba_velka" price="5000" icon="$dataS2/menu/hud/configurations/config_edition.png">
+			<fillUnits>
+				<fillUnit unit="$l10n_unit_literShort" fillTypeCategories="bulk" capacity="28000"/>
+			</fillUnits>
+			<objectChange node="0>0|0|0|0|3" visibilityActive="true" />
+			<objectChange node="0>0|0|0|0|4|0" visibilityActive="true" />
+			<objectChange node="0>0|0|0|0|9" visibilityActive="true" />
+			<objectChange node="0>0|0|0|0|4|7" visibilityActive="true" />
+		</fillConfConfiguration>
+	</fillConfConfigurations>
+</vehicle>
+```
