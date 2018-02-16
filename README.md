@@ -14,9 +14,9 @@ If you'll use this specialization, some validity checks of GE scripts will not w
 
 ## Script informations
 
-Author of script: [Martin Fabík](https://www.fb.com/LoogleCZ) [<mar.fabik@gmail.com>](mailto:mar.fabik@gmail.com)
+Author of script: [Martin Fabík](https://www.fb.com/LoogleCZ) [\<mar.fabik@gmail.com\>](mailto:mar.fabik@gmail.com)
 
-Idea author: [AgroSketch a.s.](https://www.fb.com/AgroSketch/) and [Martin Fabík](https://www.fb.com/LoogleCZ) [<mar.fabik@gmail.com>](mailto:mar.fabik@gmail.com)
+Idea author: [AgroSketch a.s.](https://www.fb.com/AgroSketch/) and [Martin Fabík](https://www.fb.com/LoogleCZ) [\<mar.fabik@gmail.com\>](mailto:mar.fabik@gmail.com)
 
 Script namesapce: `LFO`
 
