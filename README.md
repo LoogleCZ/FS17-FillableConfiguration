@@ -10,7 +10,7 @@ This script came with brief documentation where you can find how to install this
 
 If you'll use this specialization, some validity checks of GE scripts will not work! Most important: *Fillable needs to be the first specialization which implements setIsFilling*. Tip for you: first create mod without configurations and then add Fillable Configuration only if there is no errors in log.
 
-* [Instalation into mod.](./documentation/en/instalation.md)
+* [Instalation into mod.](./documentation/en/installation.md)
 
 ## Script informations
 
