@@ -470,8 +470,190 @@ function FillableConfiguration:load(savegame)
 	self.fillVolumeDirtyFlag = self:getNextDirtyFlag();
 	
 	-- load data from trailer
-	-- TODO
+	
+	self.tipAnimations = {};
+	local animationsBase = fallbackOldKey .. ".tipAnimations.tipAnimation";
+	if key ~= nil and hasXMLProperty(self.xmlFile, fallbackConfigKey..".tipAnimations.tipAnimation(0)") then
+		animationsBase = fallbackConfigKey..".tipAnimations.tipAnimation";
+	end;
+	if key ~= nil and hasXMLProperty(self.xmlFile, key..".tipAnimations.tipAnimation(0)") then
+		animationsBase = key..".tipAnimations.tipAnimation";
+	end;
+    local i = 0;
+    while true do
+        local animKey = string.format(animationsBase .. "(%d)", i);
+        if not hasXMLProperty(self.xmlFile, animKey) then
+            break;
+        end
+		
+        local tipAnimation = {};
+        tipAnimation.name = getXMLString(self.xmlFile, animKey.."#name");
+        if tipAnimation.name ~= nil then
+            local i18n = g_i18n;
+            if self.customEnvironment ~= nil then
+                i18n = _G[self.customEnvironment].g_i18n;
+            end
+            tipAnimation.name = i18n:getText(tipAnimation.name);
+        else
+            tipAnimation.name = i + 1;
+        end
+        tipAnimation.dischargeEndTime = getXMLFloat(self.xmlFile, animKey.."#dischargeEndTime");
+        if tipAnimation.dischargeEndTime ~= nil then
+            tipAnimation.dischargeEndTime = tipAnimation.dischargeEndTime * 1000;
+        end;
+        tipAnimation.dischargeStartTime = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#dischargeStartTime"), 0)*1000;
+        local animationName = getXMLString(self.xmlFile, animKey.."#animationName");
+        tipAnimation.animationOpenSpeedScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#openSpeedScale"), 1);
+        tipAnimation.animationCloseSpeedScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#closeSpeedScale"), -1);
+        tipAnimation.unloadingSpeedScale = getXMLFloat(self.xmlFile, animKey.."#speedScale");
+        if tipAnimation.unloadingSpeedScale == nil then
+            tipAnimation.unloadingSpeedScale = tipAnimation.animationOpenSpeedScale;
+        end;
+        if animationName ~= nil then
+            if self.playAnimation ~= nil and self.getAnimationDuration ~= nil then
+                tipAnimation.animationName = animationName;
+                tipAnimation.animationDuration = self:getAnimationDuration(animationName);
+            else
+                print("Error: tip animation "..i.." has animation name, but misses specialization AnimatedVehicle in "..self.configFileName);
+            end;
+        else
+            local animationRootNode = Utils.indexToObject(self.components, getXMLString(self.xmlFile, animKey.."#rootNode"));
+            if animationRootNode ~= nil then
+                local animationCharSet = getAnimCharacterSet(animationRootNode);
+                if animationCharSet ~= nil then
+                    local clip = getAnimClipIndex(animationCharSet, getXMLString(self.xmlFile, animKey.."#clip"));
+                    assignAnimTrackClip(animationCharSet, 0, clip);
+                    setAnimTrackLoopState(animationCharSet, 0, false);
+                    tipAnimation.animationCharSet = animationCharSet;
+                    tipAnimation.animationDuration = getAnimClipDuration(animationCharSet, clip);
+                end
+            end
+        end
+        if tipAnimation.dischargeEndTime == nil and tipAnimation.animationDuration ~= nil then
+            tipAnimation.dischargeEndTime = tipAnimation.animationDuration*2.0;
+        end
+        if tipAnimation.dischargeEndTime ~= nil then
+            if self.isClient then
+                tipAnimation.emitterShape = Utils.indexToObject(self.components, getXMLString(self.xmlFile, animKey..".emitterShape#node"));
+                tipAnimation.emitCountScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey..".emitterShape#emitCountScale"), 1);
+                tipAnimation.isAdditionalEffect = Utils.getNoNil(getXMLBool(self.xmlFile, animKey..".emitterShape#isAdditionalEffect"), false);
+                tipAnimation.particleType = getXMLString(self.xmlFile, animKey..".emitterShape#particleType")
+                tipAnimation.tipEffect = EffectManager:loadEffect(self.xmlFile, animKey..".tipEffect", self.components, self);
+            end
+            tipAnimation.doorAnimationName = getXMLString(self.xmlFile, animKey.."#doorAnimationName");
+            tipAnimation.doorAnimationSpeedScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#doorAnimationSpeedScale"), 1.0);
+            tipAnimation.doorAnimationOpenSpeedScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#doorAnimationOpenSpeedScale"), 1);
+            tipAnimation.doorAnimationCloseSpeedScale = Utils.getNoNil(getXMLFloat(self.xmlFile, animKey.."#doorAnimationCloseSpeedScale"), -1);
+            tipAnimation.fillVolumeUnloadInfoIndex = getXMLInt(self.xmlFile, animKey..".fillVolume.unloadInfo#index");
+            tipAnimation.fillVolumeDischargeInfoIndex = getXMLInt(self.xmlFile, animKey..".fillVolume.dischargeInfo#index");
+            tipAnimation.fillVolumeHeightIndex = getXMLInt(self.xmlFile, animKey..".fillVolume.height#index");
+            table.insert(self.tipAnimations, tipAnimation);
+        else
+            print("Error: invalid tip animation "..i.." in "..self.configFileName);
+        end
+        i = i + 1;
+    end
+    if self.isClient then
+        self.referenceParticleSystems = {};
+        for _, tipAnimation in pairs(self.tipAnimations) do
+            local fillUnitIndex = 1
+            if tipAnimation.fillVolumeHeightIndex ~= nil then
+                local volumeId = self.fillVolumeHeights[tipAnimation.fillVolumeHeightIndex].fillVolumeIndex;
+                fillUnitIndex = self.fillVolumes[volumeId].fillUnitIndex;
+            end
+            if self.fillUnits[fillUnitIndex] ~= nil then
+                for fillType, _ in pairs(self:getUnitFillTypes(fillUnitIndex)) do
+                    if self.referenceParticleSystems[fillType] == nil then
+                        local particleSystem = MaterialUtil.getParticleSystem(fillType, Utils.getNoNil(tipAnimation.particleType, "unloading"))
+                        if particleSystem ~= nil then
+                            local psClone = clone( particleSystem.shape, true, false, true );
+                            local currentPS = {};
+                            ParticleUtil.loadParticleSystemFromNode(psClone, currentPS, false, true, particleSystem.forceFullLifespan);
+                            self.referenceParticleSystems[fillType] = currentPS;
+                        end
+                    end
+                end
+            end
+        end
+    end
+    self.tipState = Trailer.TIPSTATE_CLOSED;
+    self.fillLevelToTippedFillLevel = 1;
+    self.tipReferencePoints = {};
+    local i = 0;
+	local animationsBase = fallbackOldKey .. ".tipReferencePoints.tipReferencePoint";
+	if key ~= nil and hasXMLProperty(self.xmlFile, fallbackConfigKey..".tipReferencePoints.tipReferencePoint(0)") then
+		animationsBase = fallbackConfigKey..".tipReferencePoints.tipReferencePoint";
+	end;
+	if key ~= nil and hasXMLProperty(self.xmlFile, key..".tipReferencePoints.tipReferencePoint(0)") then
+		animationsBase = key..".tipReferencePoints.tipReferencePoint";
+	end;
+    while true do
+        local referenceKey = string.format(animationsBase .. "(%d)", i);
+        if not hasXMLProperty(self.xmlFile, referenceKey) then
+            break;
+        end
+        local node = Utils.indexToObject(self.components, getXMLString(self.xmlFile, referenceKey.."#index"));
+        if node ~= nil then
+            local width = Utils.getNoNil(getXMLFloat(self.xmlFile, referenceKey.."#width"), 0);
+            local maxZOffset = Utils.getNoNil(getXMLFloat(self.xmlFile, referenceKey.."#maxZOffset"), 2);
+            table.insert(self.tipReferencePoints, {node=node, width=width, zOffset=0, maxZOffset=maxZOffset});
+        end
+        i = i + 1;
+    end
+    if self.tipReferencePoints ~= nil then
+        self.numTipReferencePoints = table.getn(self.tipReferencePoints);
+    else
+        self.numTipReferencePoints = 0;
+    end
+    self.preferedTipReferencePointIndex = 1
+    
+    if self.isClient then
+		local animationsBase = fallbackOldKey .. ".tipRotationNodes.tipRotationNode";
+		if key ~= nil and hasXMLProperty(self.xmlFile, fallbackConfigKey..".tipRotationNodes.tipRotationNode(0)") then
+			animationsBase = fallbackConfigKey..".tipRotationNodes.tipRotationNode";
+		end;
+		if key ~= nil and hasXMLProperty(self.xmlFile, key..".tipRotationNodes.tipRotationNode(0)") then
+			animationsBase = key..".tipRotationNodes.tipRotationNode";
+		end;
+        self.tipRotationNodes = Utils.loadRotationNodes(self.xmlFile, {}, animationsBase, "trailer", self.components);
+		
+		local animationsBase = fallbackOldKey .. ".tipScrollerNodes.tipScrollerNode";
+		if key ~= nil and hasXMLProperty(self.xmlFile, fallbackConfigKey..".tipScrollerNodes.tipScrollerNode(0)") then
+			animationsBase = fallbackConfigKey..".tipScrollerNodes.tipScrollerNode";
+		end;
+		if key ~= nil and hasXMLProperty(self.xmlFile, key..".tipScrollerNodes.tipScrollerNode(0)") then
+			animationsBase = key..".tipScrollerNodes.tipScrollerNode";
+		end;
+        self.tipScrollers = Utils.loadScrollers(self.components, self.xmlFile, animationsBase, {}, false);
+    end
+    local start = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".groundDropArea", "#startIndex", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    local width = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".groundDropArea", "#widthIndex", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    local height = Utils.indexToObject(self.components, Vehicle.getConfigurationValue(self.xmlFile, key, ".groundDropArea", "#heightIndex", getXMLString, nil, fallbackConfigKey, fallbackOldKey));
+    if start ~= nil and width ~= nil and height ~= nil then
+        local area = {};
+        area.start = start;
+        area.width = width;
+        area.height = height;
+        self.groundDropArea = area;
+    end
+    self.remainingFillDelta = 0;
+    self.isSelectable = true;
+    self.couldNotDropTimer = 0;
+    self.couldNotDropTimerThreshold = 1000;
+    self.allowTipDischarge = Vehicle.getConfigurationValue(self.xmlFile, key, ".allowTipDischarge", "#value", getXMLBool, true, fallbackConfigKey, fallbackOldKey);
+    self.trailer = {};
+    self.trailer.fillUnitIndex = Vehicle.getConfigurationValue(self.xmlFile, key, ".trailer", "#fillUnitIndex", getXMLInt, 1, fallbackConfigKey, fallbackOldKey);
+    self.trailer.unloadInfoIndex = Vehicle.getConfigurationValue(self.xmlFile, key, ".trailer", "#unloadInfoIndex", getXMLInt, 1, fallbackConfigKey, fallbackOldKey);
+    self.trailer.loadInfoIndex = Vehicle.getConfigurationValue(self.xmlFile, key, ".trailer", "#loadInfoIndex", getXMLInt, 1, fallbackConfigKey, fallbackOldKey);
+    self.trailer.dischargeInfoIndex = Vehicle.getConfigurationValue(self.xmlFile, key, ".trailer", "#dischargeInfoIndex", getXMLInt, 1, fallbackConfigKey, fallbackOldKey);
+    self.trailer.stopTipToGroundIfEmpty = Vehicle.getConfigurationValue(self.xmlFile, key, ".trailer", "#stopTipToGroundIfEmpty", getXMLBool, false, fallbackConfigKey, fallbackOldKey);
+    if savegame ~= nil then
+        self.preferedTipReferencePointIndex = Utils.getNoNil(getXMLFloat(savegame.xmlFile, savegame.key .. "#preferedTipReferencePointIndex"), self.preferedTipReferencePointIndex);
+    end
+	
 	-- end of loading
+	
+	ObjectChangeUtil.updateObjectChanges(self.xmlFile, "vehicle.fillConfConfigurations.fillConfConfiguration", self.configurations["fillConf"], self.components, self);
 end;
 
 function FillableConfiguration:postLoad(savegame)
