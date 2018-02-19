@@ -15,7 +15,7 @@
 --
 
 -- register new configuration type
-ConfigurationUtil.registerConfigurationType("fillConf", "Fillable configuration", nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION);
+ConfigurationUtil.registerConfigurationType("fillConf", g_i18n:getText("l10n_fillableConfiguration"), nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION);
 
 FillableConfiguration = {};
 

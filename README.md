@@ -36,6 +36,10 @@ List of mods using this script. If you want, you can add your mod in this list o
 
 * *Strom TC 21000 - WIP* by [AgroSketch a.s.](https://www.fb.com/AgroSketch/)
 
+## Support
+
+If you like this script you can support me with donation on [PayPal](https://www.paypal.me/MartinFabik) or you can join this project by testing, suggestions, etc... Any kind of support is appreciated.
+
 ## Usage conditions
 
 Script is free for noncommercial use. Any commercial usage is prohibited. Also do not remove headers from scripts and you must keep information about author of script. If you want to help with development with this script, you can do this here on GitHub or write me an email an [mar.fabik@gmail.com](mailto:mar.fabik@gmail.com).
