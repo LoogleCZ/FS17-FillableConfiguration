@@ -43,6 +43,23 @@ By now you have done minimal modDesc instalation. Now you have to go into vehicl
 
 ## Step 4
 
+For proper work of this specialization you will need to have one l10n text. Text is called `l10n_fillableConfiguration` and it is the text for display in shop with configuration. Here is example:
+
+```xml
+<modDesc descVersion="37">
+	<!-- rest of your modDesc here -->
+	<l10n>
+		<text name="l10n_fillableConfiguration">
+			<en>Fillable configuration</en>
+			<de>Fillable configuration</de>
+			<cz>Nastavení nástavby</cz>
+		</text>
+	</l10n>
+</modDesc>
+```
+
+## Step 5
+
 In vehicle's xml file you can configure this tags (almost all form Fillable, FillVolume and Trailer):
 
 * `supportsFillTriggers`
