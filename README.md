@@ -4,6 +4,8 @@ This specialization adds configuration option in store for vehicle. Configuratio
 
 Testers wanted! If you want to help me, you can use this script in your beta mods and test it. After testing, please report me any error or bug if you find some. It really helps me.
 
+You can also chack [promo video](https://www.youtube.com/watch?v=tKLGwjw8NBY) for this spcialization. Feel free to share.
+
 ## Documentation
 
 This script came with brief documentation where you can find how to install this script into your mod. Also you can find here a list of available nodes for configuration.
