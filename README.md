@@ -22,7 +22,9 @@ Script namesapce: `LFO`
 
 ### Release
 
-Script have no release yet! If you will use this script it is on your own risk.
+Latest release: 1.0.0.
+
+Last release date: 2018-02-22
 
 ### Development
 
