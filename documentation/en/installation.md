@@ -39,7 +39,27 @@ Now you need to add FillableConfiguration specialization into your vehicle type.
 </modDesc>
 ```
 
-By now you have done minimal modDesc instalation. Now you have to go into vehicle's xml file and set some configuraions
+By now you have done minimal modDesc instalation. Now you have to go into vehicle's xml file and set some configuraions.
+
+**TIP for correct results:**
+
+1. Place FillableConfiguration specialization after all overwritten specializations (`Fillable`, `FillVolume` and `Trailer`).
+2. Then place all specializations with hard dependency on `Fillable`, `FillVolume` or `Trailer` **after** `FillableConfiguration`. List of those specializations is here:
+
+	- `Overloading`
+	- `StrawBlower`
+	- `FuelTrailer`
+	- `Leveler`
+	- `ReceivingHopper`
+	- `Shovel`
+	- `WaterTrailer`
+	- `WoodCrusher`
+
+3. Also add all specializations with soft dependency on `Fillable`, `FillVolume` or `Trailer` **after** `FillableConfiguration`. List of known specializations is available here. Please note this list is **not** complete:
+
+	- `Cover`
+
+4. If you encounter any problem with any other specialization, try to move this specialization **after** `FillableConfiguration` if applicable. If you have problem with FillConf. specialization you can contact me at [mar.fabik@gmail.com](mailto:mar.fabik@gmail.com).
 
 ## Step 4
 
