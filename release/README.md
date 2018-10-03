@@ -1,4 +1,4 @@
-# Fillable Configuration version 1.0.0.
+# Fillable Configuration version 1.0.1.
 
 GitHub repository with releases: https://github.com/LoogleCZ/FS17-FillableConfiguration
 
