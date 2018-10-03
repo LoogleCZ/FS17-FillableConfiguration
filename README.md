@@ -24,25 +24,25 @@ Script namesapce: `LFO`
 
 ### Release
 
-Latest release: 1.0.0.
+Latest release: 1.0.1.
 
-Last release date: 2018-02-22
+Last release date: 2018-10-03
 
 ### Development
 
-Last script development version: 1.0.0.
+Last script development version: 1.0.1.
 
-Last modification date: 2018-02-16
+Last modification date: 2018-10-03
 
 ## Mods using this script
 
 List of mods using this script. If you want, you can add your mod in this list or I'll add your mod in this list if you [send me a mail](mailto:mar.fabik@gmail.com).
 
-* *Strom TC 21000 - WIP* by [AgroSketch a.s.](https://www.fb.com/AgroSketch/)
+- *[Strom TC 21000](https://www.farming-simulator.com/mod.php?mod_id=101797)* by [AgroSketch a.s.](https://www.fb.com/AgroSketch/)
 
 ## Support
 
-If you like this script you can support me with donation on [PayPal](https://www.paypal.me/MartinFabik) or you can join this project by testing, suggestions, etc... Any kind of support is appreciated.
+If you like this script you can support me with donation on [PayPal](https://www.paypal.me/MartinFabik) (address is mar.fabik@gmail.com) or you can join this project by testing, suggestions, etc... Any kind of support is appreciated.
 
 ## Usage conditions
 

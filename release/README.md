@@ -2,6 +2,10 @@
 
 GitHub repository with releases: https://github.com/LoogleCZ/FS17-FillableConfiguration
 
+## Support
+
+PayPal support on adress mar.fabik@gmail.com or on http://paypal.me/MartinFabik
+
 ## Authors
 
 Author: Martin Fabík <mar.fabik@gmail.com>

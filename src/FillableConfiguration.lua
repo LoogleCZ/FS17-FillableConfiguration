@@ -6,8 +6,8 @@
 --
 -- Free for non-comerecial usage!
 --
--- version ID   - 1.0.0
--- version date - 2018-02-11 21:06:00
+-- version ID   - 1.0.1
+-- version date - 2018-10-03 15:10:00
 --
 -- used namespace: LFO
 --
@@ -15,7 +15,9 @@
 --
 
 -- register new configuration type
-ConfigurationUtil.registerConfigurationType("fillConf", g_i18n:getText("l10n_fillableConfiguration"), nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION);
+if not ConfigurationUtil.configurations.fillConf then
+	ConfigurationUtil.registerConfigurationType("fillConf", g_i18n:getText("l10n_fillableConfiguration"), nil, nil, nil, ConfigurationUtil.SELECTOR_MULTIOPTION);
+end;
 
 FillableConfiguration = {};
 
